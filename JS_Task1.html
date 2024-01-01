@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Selector</title>
+</head>
+
+<body>
+    <p>Hello Everyone, where do you want to go for a picnic?</p>
+
+    <label for="country">Select Country:</label>
+    <select id="country" onchange="showOptions('country', 'state', 'city', 'town')">
+        <option value="Select">Select</option>
+        <option value="India">India</option>
+        <option value="America">America</option>
+    </select>
+    <br />
+
+    <label for="state">Select State:</label>
+    <select id="state" onchange="showOptions1('state', 'city', 'town')">
+        <option value="Select">Select</option>
+    </select>
+    <br />
+
+    <label for="city">Select City:</label>
+    <select id="city" onchange="showOptions2('city', 'town')">
+        <option value="Select">Select</option>
+    </select>
+    <br />
+
+    <label for="town">Select Town:</label>
+    <select id="town">
+        <option value="Select">Select</option>
+    </select>
+
+    <script>
+        var hierarchy = [
+            {
+                name: "India",
+                children: [
+                    {
+                        name: "Gujarat",
+                        children: [
+                            {
+                                name: "Ahmedabad",
+                                children: ["Maninagar", "Vastrapur"]
+                            },
+                            {
+                                name: "Surat",
+                                children: ["Adajan", "Piplod"]
+                            }
+                        ]
+                    },
+                    {
+                        name: "Delhi",
+                        children: [
+                            {
+                                name: "New Delhi",
+                                children: ["Connaught Place", "Karol Bagh"]
+                            },
+                            {
+                                name: "Old Delhi",
+                                children: ["Chandni Chowk", "Daryaganj"]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "America",
+                children: [
+                    {
+                        name: "New York",
+                        children: [
+                            {
+                                name: "Manhattan",
+                                children: ["Midtown", "Upper East Side"]
+                            },
+                            {
+                                name: "Brooklyn",
+                                children: ["Williamsburg", "DUMBO"]
+                            }
+                        ]
+                    },
+                    {
+                        name: "California",
+                        children: [
+                            {
+                                name: "Los Angeles",
+                                children: ["Hollywood", "Santa Monica"]
+                            },
+                            {
+                                name: "San Francisco",
+                                children: ["Fisherman's Wharf", "Golden Gate"]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        function populateDropdown(elementId, options) {
+            var dropdown = document.getElementById(elementId);
+            dropdown.innerHTML = "";
+
+            options.forEach(function (option) {
+                var optionElement = document.createElement("option");
+                optionElement.value = option;
+                optionElement.textContent = option;
+                dropdown.appendChild(optionElement);
+            });
+        }
+
+        function showOptions(currentDropdownId, nextDropdownId, finalDropdownId, townDropdownId) {
+            var selectedValue = document.getElementById(currentDropdownId).value;
+            var nextDropdown = document.getElementById(nextDropdownId);
+            var finalDropdown = document.getElementById(finalDropdownId);  
+            var townDropdown = document.getElementById(townDropdownId);
+
+            var selectedHierarchy = hierarchy.find(item => item.name === selectedValue);
+
+            nextDropdown.style.display = "block";
+            populateDropdown(nextDropdownId, selectedHierarchy.children.map(item => item.name));
+
+            // finalDropdown.style.display = "none";
+            // townDropdown.style.display = "none";
+        }
+
+        function showOptions1(currentDropdownId, nextDropdownId, townDropdownId) {
+            var selectedValue = document.getElementById(currentDropdownId).value;
+            var nextDropdown = document.getElementById(nextDropdownId);
+            var townDropdown = document.getElementById(townDropdownId);
+
+            var selectedCountry = hierarchy.find(item => item.name === document.getElementById('country').value);
+            var selectedState = selectedCountry.children.find(item => item.name === selectedValue);
+
+            nextDropdown.style.display = "block";
+            populateDropdown(nextDropdownId, selectedState.children.map(item => item.name));
+
+            // townDropdown.style.display = "none";
+        }
+
+        function showOptions2(currentDropdownId, townDropdownId) {
+            var selectedValue = document.getElementById(currentDropdownId).value;
+            var townDropdown = document.getElementById(townDropdownId);
+
+            var selectedCountry = hierarchy.find(item => item.name === document.getElementById('country').value);
+            var selectedState = selectedCountry.children.find(item => item.name === document.getElementById('state').value);
+            var selectedCity = selectedState.children.find(item => item.name === selectedValue);
+
+            townDropdown.style.display = "block";
+            populateDropdown(townDropdownId, selectedCity.children);
+        }
+    </script>
+</body>
+
+</html>
